@@ -1,13 +1,21 @@
 // controllers/financialController.mjs
 import FinancialEntry from '../models/FinancialEntry.mjs';
 
+const transformEntry = (entry) => ({
+  id: entry._id,
+  value: entry.value,
+  description: entry.description,
+  date: entry.date,
+  type: entry.type,
+});
+
 export const createEntry = async (req, res) => {
   const { value, description, date, type } = req.body;
 
   try {
     const newEntry = new FinancialEntry({ value, description, date, type });
     await newEntry.save();
-    res.status(201).json({ message: 'Financial entry created successfully', entry: newEntry });
+    res.status(201).json({ message: 'Financial entry created successfully', entry: transformEntry(newEntry) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -16,7 +24,8 @@ export const createEntry = async (req, res) => {
 export const getEntries = async (req, res) => {
   try {
     const entries = await FinancialEntry.find();
-    res.status(200).json(entries);
+    const transformedEntries = entries.map(transformEntry);
+    res.status(200).json(transformedEntries);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -29,7 +38,7 @@ export const getEntry = async (req, res) => {
     if (!entry) {
       return res.status(404).json({ message: 'Financial entry not found' });
     }
-    res.status(200).json(entry);
+    res.status(200).json(transformEntry(entry));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -51,7 +60,7 @@ export const updateEntry = async (req, res) => {
     if (type !== undefined) entry.type = type;
 
     await entry.save();
-    res.status(200).json({ message: 'Financial entry updated successfully', entry });
+    res.status(200).json({ message: 'Financial entry updated successfully', entry: transformEntry(entry) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -64,7 +73,7 @@ export const deleteEntry = async (req, res) => {
     if (!entry) {
       return res.status(404).json({ message: 'Financial entry not found' });
     }
-    await entry.remove();
+    await entry.deleteOne({ id: id });
     res.status(200).json({ message: 'Financial entry deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
