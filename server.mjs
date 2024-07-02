@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI; // Use MongoDB URI from environment variables
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://yourdomain.com'];
+const allowedOrigins = ['http://localhost:3000', 'https://todowebappcrud.netlify.app'];
 
 // CORS options function
 const corsOptionsDelegate = function (req, callback) {
