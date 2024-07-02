@@ -15,12 +15,24 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI; // Use MongoDB URI from environment variables
 
 // Middleware
-app.use(express.json());
-const corsOptions = {
-  origin: '*',
-  credentials: true,
+const allowedOrigins = ['http://localhost:3000', 'https://yourdomain.com'];
+
+// CORS options function
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (allowedOrigins.indexOf(req.header('Origin')) !== -1) {
+    // Allow request from an origin in allowedOrigins array
+    corsOptions = { origin: true, credentials: true };
+  } else {
+    // Block request if not from an allowed origin
+    corsOptions = { origin: false };
+  }
+  callback(null, corsOptions);
 };
-app.use(cors(corsOptions));
+
+// Middleware
+app.use(express.json());
+app.use(cors(corsOptionsDelegate));
 
 // Routes
 app.get('/api', (req, res) => {
