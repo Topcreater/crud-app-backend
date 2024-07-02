@@ -19,7 +19,9 @@ app.use(cors({
     methods: ['GET', 'POST' , 'PUT' , 'DELETE', 'PATCH'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
   }));
-  
+  app.get('/api', (req, res) => {
+    res.send('Hello World from Vercel!');
+  });
 app.use('/auth', authRoutes);
 app.use('/financial', financialRoutes);
 app.use('/customer', customerRoutes);
