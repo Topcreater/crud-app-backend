@@ -6,6 +6,8 @@ import authRoutes from './routes/authRoutes.mjs';
 import financialRoutes from './routes/financialRoutes.mjs';
 import customerRoutes from './routes/customerRoutes.mjs';
 import contractRoutes from './routes/contractRoutes.mjs';
+import taskRoutes from './routes/taskRoutes.mjs';
+
 import cors from 'cors';
 
 dotenv.config(); // Load environment variables from .env file
@@ -44,6 +46,7 @@ app.use('/auth', authRoutes);
 app.use('/financial', financialRoutes);
 app.use('/customer', customerRoutes);
 app.use('/contract', contractRoutes);
+app.use('/task', taskRoutes);
 
 // Connect to MongoDB and start server
 mongoose.connect(MONGODB_URI, {
