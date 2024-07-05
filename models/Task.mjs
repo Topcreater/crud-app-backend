@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   calculatedTime: { type: Number, required: true },
-  contract: { type: mongoose.Schema.Types.ObjectId, ref: 'Contract', required: true }
+  contract: { type: String, required: true }
 });
 
 taskSchema.pre('save', function(next) {

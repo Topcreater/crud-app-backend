@@ -5,7 +5,7 @@ import { createContract, getContracts, getContract, updateContract, deleteContra
 const router = express.Router();
 
 router.post('/contracts', createContract);
-router.get('/contracts', getContracts);
+router.get('/contracts', getContracts); // Handles optional startDate and endDate query parameters
 router.get('/contracts/:id', getContract);
 router.put('/contracts/:id', updateContract);
 router.delete('/contracts/:id', deleteContract);

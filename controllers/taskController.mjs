@@ -6,14 +6,10 @@ import fs from 'fs';
 
 
 export const createTask = async (req, res) => {
-    const { description, technician, startDate, endDate, contractId } = req.body;
+    const { description, technician, startDate, endDate, contract } = req.body;
   
     try {
-      const contract = await Contract.findById(contractId);
-      if (!contract) {
-        return res.status(404).json({ message: 'Contract not found' });
-      }
-  
+
       // Calculate the difference between start and end dates in hours
       const start = new Date(startDate);
       const end = new Date(endDate);
@@ -24,7 +20,7 @@ export const createTask = async (req, res) => {
         technician, 
         startDate, 
         endDate, 
-        contract: contractId, 
+        contract: contract, 
         calculatedTime
       });
       await newTask.save();
@@ -59,7 +55,7 @@ export const getTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   const { id } = req.params;
-  const { description, technician, startDate, endDate, contractId } = req.body;
+  const { description, technician, startDate, endDate, contract } = req.body;
 
   try {
     const task = await Task.findById(id);
@@ -71,7 +67,7 @@ export const updateTask = async (req, res) => {
     if (technician !== undefined) task.technician = technician;
     if (startDate !== undefined) task.startDate = startDate;
     if (endDate !== undefined) task.endDate = endDate;
-    if (contractId !== undefined) task.contract = contractId;
+    if (contract !== undefined) task.contract = contract;
 
     await task.save();
     res.status(200).json({ message: 'Task updated successfully', task });
