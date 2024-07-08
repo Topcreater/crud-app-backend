@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 
 const contractSchema = new mongoose.Schema({
-  contractName: { type: mongoose.Schema.Types.ObjectId, ref: 'Task', required: true },
+  contractName: { type: String, required: true },
   customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
   hourlyRate: { type: Number, required: true },
   contractedMonthlyHours: { type: Number, required: true }

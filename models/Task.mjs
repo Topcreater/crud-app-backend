@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 
 const taskSchema = new mongoose.Schema({
   description: { type: String, required: true },
-  technician: { type: String, required: true }, // Manual entry for technician
+  technician: { type: String, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   calculatedTime: { type: Number, required: true },
-  contract: { type: String, required: true }
+  contract: { type: mongoose.Schema.Types.ObjectId, ref: 'Contract', required: true }
 });
 
 taskSchema.pre('save', function(next) {

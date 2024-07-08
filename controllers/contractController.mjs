@@ -4,16 +4,7 @@ import Task from '../models/Task.mjs';
 
 const formatContract = (contract) => ({
   id: contract._id, // Transform _id to id
-  contractName: {
-    _id: contract.contractName._id,
-    description: contract.contractName.description,
-    technician: contract.contractName.technician,
-    startDate: contract.contractName.startDate,
-    endDate: contract.contractName.endDate,
-    calculatedTime: contract.contractName.calculatedTime,
-    contract: contract.contractName.contract,
-    __v: contract.contractName.__v
-  },
+  contractName:contract.contractName,
   customer: {
     _id: contract.customer._id,
     customerName: contract.customer.customerName,
@@ -23,7 +14,7 @@ const formatContract = (contract) => ({
   },
   hourlyRate: contract.hourlyRate,
   contractedMonthlyHours: contract.contractedMonthlyHours,
-  createdAt: contract.createdAt // Include createdAt field
+  createdAt: contract.createdAt 
 });
 
 export const createContract = async (req, res) => {
@@ -34,24 +25,14 @@ export const createContract = async (req, res) => {
     if (!customer) {
       return res.status(404).json({ message: 'Customer not found' });
     }
-    const task = await Task.findById(contractName);
-    if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
 
     const newContract = new Contract({
-      contractName: task,
+      contractName: contractName,
       customer: customer,
       hourlyRate,
       contractedMonthlyHours
     });
     await newContract.save();
-
-    // Populate the fields after saving the document
-    const populatedContract = await Contract.findById(newContract._id)
-      .populate('contractName')
-      .populate('customer')
-      .exec();
 
     const contract = formatContract(newContract);
     res.status(201).json([{ contract }]);
@@ -75,7 +56,6 @@ export const getContracts = async (req, res) => {
   try {
     const contracts = await Contract.find(filter)
       .populate('customer')
-      .populate('contractName'); // Populate full contractName
 
     const formattedContracts = contracts.map(formatContract); // Map each contract to include id
     res.status(200).json(formattedContracts);
@@ -89,7 +69,6 @@ export const getContract = async (req, res) => {
   try {
     const contract = await Contract.findById(id)
       .populate('customer')
-      .populate('contractName'); // Populate full contractName
 
     if (!contract) {
       return res.status(404).json({ message: 'Contract not found' });
@@ -119,16 +98,10 @@ export const updateContract = async (req, res) => {
       contract.customer = customerId;
     }
 
-    if (contractName) {
-      const task = await Task.findById(contractName);
-      if (!task) {
-        return res.status(404).json({ message: 'Task not found' });
-      }
-      contract.contractName = contractName;
-    }
 
     if (hourlyRate !== undefined) contract.hourlyRate = hourlyRate;
     if (contractedMonthlyHours !== undefined) contract.contractedMonthlyHours = contractedMonthlyHours;
+    if (contractName !== undefined) contract.contractName = contractName;
 
     await contract.save();
     res.status(200).json({ message: 'Contract updated successfully', contract: formatContract(contract) });
