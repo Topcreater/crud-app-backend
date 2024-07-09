@@ -1,4 +1,6 @@
+import Contract from '../models/Contract.mjs';
 import Customer from '../models/Customer.mjs';
+import Task from '../models/Task.mjs';
 
 export const createCustomer = async (req, res) => {
   const { customerName, cnpj, address } = req.body;
@@ -67,6 +69,8 @@ export const updateCustomer = async (req, res) => {
   }
 };
 
+
+
 export const deleteCustomer = async (req, res) => {
   const { id } = req.params;
   try {
@@ -74,9 +78,18 @@ export const deleteCustomer = async (req, res) => {
     if (!customer) {
       return res.status(404).json({ message: 'Customer not found' });
     }
-    await Customer.deleteOne({ _id: id });
-    res.status(200).json({ message: 'Customer deleted successfully' });
+
+    // Find and delete related contracts
+    const contracts = await Contract.find({ customer: id });
+    for (const contract of contracts) {
+      await Task.deleteMany({ contract: contract._id }); // Delete related tasks
+      await contract.deleteOne(); // Delete the contract
+    }
+
+    await customer.deleteOne(); // Delete the customer
+    res.status(200).json({ message: 'Customer and related contracts/tasks deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+

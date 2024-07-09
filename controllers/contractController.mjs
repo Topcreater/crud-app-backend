@@ -110,6 +110,7 @@ export const updateContract = async (req, res) => {
   }
 };
 
+
 export const deleteContract = async (req, res) => {
   const { id } = req.params;
   try {
@@ -117,9 +118,11 @@ export const deleteContract = async (req, res) => {
     if (!contract) {
       return res.status(404).json({ message: 'Contract not found' });
     }
-    await contract.deleteOne();
-    res.status(200).json({ message: 'Contract deleted successfully' });
+    await Task.deleteMany({ contract: contract._id });
+    await Contract.deleteOne({ _id: id });
+    res.status(200).json({ message: 'Contract and related tasks deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
